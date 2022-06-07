@@ -27,7 +27,7 @@ const getCourses = async () => {
 // getCourses();
 
 const getCourses2 = async () => {
-  const result = await await Course.find({ isPublished: true })
+  const result = await Course.find({ isPublished: true })
     .find({ tags: { $in: ["frontend", "backend"] } })
     .sort("-price")
     .select(name, author, price);
@@ -37,7 +37,7 @@ const getCourses2 = async () => {
 // getCourses2();
 
 const getCourses3 = async () => {
-  const result = await await Course.find({ isPublished: true }).or([
+  const result = await Course.find({ isPublished: true }).or([
     {
       price: { $gte: 15 },
     },
@@ -48,3 +48,28 @@ const getCourses3 = async () => {
 };
 
 getCourses3();
+
+// const updateCourse = async (id) => {
+//   const course = await Course.findById("5a68fdc3615eda645bc6bdec");
+//   if (!course) return;
+
+//   course.isPublished = true;
+//   course.author = "Another Author";
+
+//   const result = await course.save();
+//   console.log(result);
+// };
+
+// updateCourse("5a68fdc3615eda645bc6bdec");
+
+// Query First (Update)
+
+async function updateCourse(id) {
+  const result = await Course.findByIdAndUpdate(id, {
+    $set: { author: "Mosh", isPublished: false },
+  });
+
+  console.log(result);
+}
+
+updateCourse("5a6900fff467be65019a9001");

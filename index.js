@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 mongoose
-  .connect("mongodb://localhost/playground")
+  .connect("mongodb://localhost/mongo-exercises")
   .then(() => console.log("Connected to MongoDB..."))
   .catch((err) => console.error("Couldn't connect to MongoDB...", err));
 
@@ -78,4 +78,22 @@ const getCourses = async () => {
 };
 
 getCourses();
+
 // createCourse();
+
+// Update Course
+
+const updateCourse = async (id) => {
+  const course = await Course.findById(id);
+
+  console.log(course);
+
+  if (!course) return;
+  course.isPublished = true;
+  course.author = "Another Author";
+
+  const result = await course.save();
+  console.log(result);
+};
+
+updateCourse("5a68fdd7bee8ea64649c2777");
