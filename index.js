@@ -6,26 +6,61 @@ mongoose
   .catch((err) => console.error("Couldn't connect to MongoDB...", err));
 
 const courseSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 255,
+  },
+  category: {
+    type: String,
+    required: true,
+    enum: ["web", "mobile", "network"],
+  },
   author: String,
-  tags: [String],
+  tags: {
+    type: Array,
+    validate: {
+      validator: function (v) {
+        return v && v.length > 0;
+      },
+      message: "A course should have at least on tag.",
+    },
+  },
   date: { type: Date, default: Date.now },
   isPublished: Boolean,
+  price: {
+    type: Number,
+    required: function () {
+      return this.isPublished;
+    },
+    min: 10,
+    max: 200,
+  },
 });
 
 const Course = mongoose.model("Course", courseSchema);
 
 const createCourse = async () => {
   const course = new Course({
-    name: "Ultimate Redux course",
+    name: "React JS",
     author: "Mosh",
-    tags: ["redux", "frontend"],
-    isPublished: false,
+    category: "web",
+    tags: [],
+    isPublished: true,
+    price: 15,
   });
 
-  const result = await course.save();
-  console.log(result);
+  try {
+    // await course.validate();
+    const result = await course.save();
+    console.log(result);
+  } catch (error) {
+    console.log(error.message);
+  }
 };
+
+createCourse();
 
 const getCourses = async () => {
   // Comparison Queries -->
@@ -77,23 +112,6 @@ const getCourses = async () => {
   console.log(result);
 };
 
-getCourses();
-
-// createCourse();
+// getCourses();
 
 // Update Course
-
-const updateCourse = async (id) => {
-  const course = await Course.findById(id);
-
-  console.log(course);
-
-  if (!course) return;
-  course.isPublished = true;
-  course.author = "Another Author";
-
-  const result = await course.save();
-  console.log(result);
-};
-
-updateCourse("5a68fdd7bee8ea64649c2777");
