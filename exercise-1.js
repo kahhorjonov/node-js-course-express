@@ -47,4 +47,17 @@ const getCourses3 = async () => {
   console.log(result);
 };
 
-getCourses3();
+// getCourses3();
+
+const updateCourse = async (id) => {
+  const course = await Course.findById(id);
+  if (!course) return;
+
+  course.isPublished = true;
+  course.author = "Another Author";
+
+  const result = await course.save();
+  console.log(result);
+};
+
+updateCourse("5a68fdd7bee8ea64649c2777");
