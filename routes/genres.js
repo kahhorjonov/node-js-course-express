@@ -1,19 +1,8 @@
+const { Genre, validate } = require("../models/genre");
 const mongoose = require("mongoose");
 const express = require("express");
 const Joi = require("joi");
 const router = express.Router();
-
-const Genre = mongoose.model(
-  "Genre",
-  new mongoose.Schema({
-    name: {
-      type: String,
-      required: true,
-      min: 5,
-      max: 50,
-    },
-  })
-);
 
 // vidly GET genres
 
@@ -33,7 +22,7 @@ router.get("/:id", async (req, res) => {
 // vidly POST genres
 
 router.post("/", async (req, res) => {
-  const { error } = validateGenres(req.body);
+  const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   let genre = new Genre({
@@ -47,7 +36,7 @@ router.post("/", async (req, res) => {
 // vidly PUT genres
 
 router.put("/:id", async (req, res) => {
-  const { error } = validateGenres(req.body);
+  const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const genre = await Genre.findByIdAndUpdate(
@@ -69,12 +58,5 @@ router.delete("/:id", async (req, res) => {
 
   res.send(genre);
 });
-
-// Validation
-
-function validateGenres(genre) {
-  const schema = Joi.object({ name: Joi.string().min(5).max(50).required() });
-  return schema.validate(genre);
-}
 
 module.exports = router;
